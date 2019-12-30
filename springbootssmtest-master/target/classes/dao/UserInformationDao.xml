@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.springboot.ssm.test.dao.UserInformationDao">
+
+    <resultMap id="AllColumnMap" type="org.springboot.ssm.test.entity.UserInformation">
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="AllColumnMap">
+        SELECT * FROM user_information
+    </select>
+
+</mapper>
