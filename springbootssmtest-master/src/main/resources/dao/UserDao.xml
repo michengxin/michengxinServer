@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.springboot.ssm.test.dao.UserDao">
+
+    <resultMap id="AllColumnMap" type="org.springboot.ssm.test.entity.User">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="work_num" property="workNum"/>
+        <result column="telphone" property="telphone"/>
+        <result column="eight_type" property="eightType"/>
+        <result column="game_flag" property="gameFlag"/>
+        <result column="lottery_draw_flag" property="lotteryDrawFlag"/>
+        <result column="login_flag" property="loginFlag"/>
+        <result column="first_draw_flag" property="firstDrawFlag"/>
+        <result column="two_draw_flag" property="twoDrawFlag"/>
+        <result column="three_draw_flag" property="threeDrawFlag"/>
+        <result column="four_draw_flag" property="fourDrawFlag"/>
+    </resultMap>
+
+    <select id="selectUserByWorkNum" resultMap="AllColumnMap" parameterType="string">
+          SELECT * FROM  user WHERE work_num = #{workNum}
+    </select>
+
+    <select id="selectCountByWorkNum" resultType="int" parameterType="string">
+          SELECT COUNT(1) FROM  user WHERE work_num = #{workNum}
+    </select>
+
+    <select id="checkWorkNumAndTelphone" resultType="int" parameterType="string">
+          SELECT COUNT(1) FROM  user WHERE work_num = #{workNum} AND telphone = #{telphone}
+    </select>
+
+    <select id="checkLoginFlagByWorkNum" resultType="int" parameterType="string">
+          SELECT login_flag FROM  user WHERE work_num = #{workNum}
+    </select>
+
+    <select id="checkLotteryDrawFlagByWorkNum" resultType="int" parameterType="string">
+          SELECT lottery_draw_flag FROM  user WHERE work_num = #{workNum}
+    </select>
+
+    <update id="updateLoginFlagByWorkNum" parameterType="string">
+        UPDATE user SET login_flag = 1 WHERE work_num = #{workNum}
+    </update>
+
+    <!--<select id="drawFirstPrize" resultMap="AllColumnMap">-->
+        <!--SELECT * FROM user ORDER BY rand()  LIMIT 1-->
+    <!--</select>-->
+
+    <!--<update id="updateStates" parameterType="int">-->
+        <!--UPDATE user SET lottery_draw_flag WHERE id = #{id}-->
+    <!--</update>-->
+</mapper>
