@@ -15,5 +15,6 @@ public interface IUserService {
 
     public String initLogin(String workNum,String telphone);
     public String login(String workNum,String telphone);
-
+    public String lotteryDraw(String workNum);
+    public String distributionOfFirstPrize();
 }

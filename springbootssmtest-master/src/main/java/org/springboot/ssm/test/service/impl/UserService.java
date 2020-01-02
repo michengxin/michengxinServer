@@ -86,4 +86,18 @@ public class UserService implements IUserService {
         return "登陆页面"+"该工号没有抽奖资格";
       }
   }
+  //抽奖接口
+  public String lotteryDraw(String workNum){
+      //通过工号修改抽奖flag =1;
+      int count = userDao.updateLotteryDrawFlagByWorkNum(workNum);
+      if(count>0){
+          return "true";
+      }else{
+          return "false";
+      }
+  }
+  //分配特等奖
+  public String distributionOfFirstPrize(){
+      List<User> user = userDao.distributionOfFirstPrize();
+  }
 }

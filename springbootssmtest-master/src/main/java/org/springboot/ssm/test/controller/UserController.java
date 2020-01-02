@@ -28,13 +28,38 @@ public class UserController {
   public String initLogin(String workNum,String telphone){
     return userService.initLogin(workNum,telphone);
   }
+
+
+  //初始化登录页面
+  @RequestMapping("/initLogin1")
+  @ResponseBody
+  public String initLogin1(){
+    return "1";
+  }
+
+
   //用户登录
   @RequestMapping("/login")
   @ResponseBody
   public String login(String workNum,String telphone){
     return userService.login(workNum,telphone);
   }
-  //点击抽奖按钮
 
+  //点击抽奖按钮
+  @RequestMapping("/lotteryDraw")
+  @ResponseBody
+  public String lotteryDraw(String workNum){
+    return userService.lotteryDraw(workNum);
+  }
+ //分配特等奖
+ @RequestMapping("/lotteryDraw")
+ @ResponseBody
+ public String distributionOfFirstPrize(){
+   return userService.distributionOfFirstPrize();
+ }
+
+  //分配一等奖
+  //分配二等奖
+  //分配三等奖
 
 }
