@@ -98,6 +98,50 @@ public class UserService implements IUserService {
   }
   //分配特等奖
   public String distributionOfFirstPrize(){
-      List<User> user = userDao.distributionOfFirstPrize();
+      List<String> workNums = userDao.distributionOfFirstPrize();
+      //修改user集合的特等奖flag
+      int count = userDao.updateFirstDrawFlag(workNums.get(0));
+      if(count>0){
+          return "true";
+      }else{
+          return "false";
+      }
   }
+  //分配一等奖
+  public String distributionOfTwoPrize(){
+      List<String> workNums = userDao.distributionOfTwoPrize();
+      //修改user集合的一等奖flag
+      int count = userDao.updateTwoDrawFlag(workNums);
+      if(count>0){
+          return "true";
+      }else{
+          return "false";
+      }
+  }
+  //分配二等奖
+  public String distributionOfThreePrize(){
+      List<String> workNums = userDao.distributionOfThreePrize();
+      //修改user集合的二等奖flag
+      int count = userDao.updateThreeDrawFlag(workNums);
+      if(count>0){
+          return "true";
+      }else{
+          return "false";
+      }
+  }
+  //分配三等奖
+  public String distributionOfFourPrize(){
+      List<String> workNums = userDao.distributionOfFourPrize();
+      //修改user集合的二等奖flag
+      int count = userDao.updateFourDrawFlag(workNums);
+      if(count>0){
+          return "true";
+      }else{
+          return "false";
+      }
+  }
+    //用户数据导入
+   public int importProjectList(List<User> userList){
+      return userDao.importProjectList(userList);
+   }
 }

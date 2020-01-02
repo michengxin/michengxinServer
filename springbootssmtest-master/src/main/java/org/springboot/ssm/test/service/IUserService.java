@@ -17,4 +17,8 @@ public interface IUserService {
     public String login(String workNum,String telphone);
     public String lotteryDraw(String workNum);
     public String distributionOfFirstPrize();
+    public String distributionOfTwoPrize();
+    public String distributionOfThreePrize();
+    public String distributionOfFourPrize();
+    public int importProjectList(List<User> userList);
 }

@@ -17,8 +17,13 @@ public interface UserDao {
        public int checkLoginFlagByWorkNum(@Param("workNum") String workNum);
        public int checkLotteryDrawFlagByWorkNum(@Param("workNum") String workNum);
        public int updateLotteryDrawFlagByWorkNum(@Param("workNum") String workNum);
-       public List<User> distributionOfFirstPrize();
-//     public User drawFirstPrize();
-//     public void updateLotteryDraw();//根据用户id
- //    public void updateFirstDraw(@Param("id") String id);//根据用户id修改firstDraw =1
+       public List<String> distributionOfFirstPrize();
+       public int updateFirstDrawFlag(@Param("workNum") String workNum);
+       public List<String> distributionOfTwoPrize();
+       public int updateTwoDrawFlag(List<String> workNums);
+       public List<String> distributionOfThreePrize();
+       public int updateThreeDrawFlag(List<String> workNums);
+       public List<String> distributionOfFourPrize();
+       public int updateFourDrawFlag(List<String> workNums);
+       public int importProjectList(List<User> userList);
 }

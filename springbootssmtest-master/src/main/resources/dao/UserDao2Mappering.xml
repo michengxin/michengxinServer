@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.springboot.ssm.test.dao.UserDao2">
+
+    <resultMap id="AllColumnMap" type="org.springboot.ssm.test.entity.UserInformation">
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+    </resultMap>
+
+    <resultMap id="AllColumnMap2" type="org.springboot.ssm.test.entity.User">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="telephone" property="telephone"/>
+        <result column="eight_type" property="eightType"/>
+        <result column="work_num" property="workNum"/>
+    </resultMap>
+
+
+
+
+    <select id="queryNoLotteryEightPeople" resultMap="AllColumnMap2">
+        select * from  user
+        where eight_type = '0'
+		order by rand() limit 8;
+    </select>
+
+    <update id="updateEightType">
+        update user
+        set eight_type = #{eightType}
+        where id in
+        <foreach collection="userList" separator="," open="(" close=")" item="item">
+            #{item.id}
+        </foreach>
+    </update>
+
+
+</mapper>
