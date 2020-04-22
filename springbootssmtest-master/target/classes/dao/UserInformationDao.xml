@@ -8,7 +8,7 @@
     </resultMap>
 
     <select id="selectAll" resultMap="AllColumnMap">
-        SELECT * FROM user_information 111
+        SELECT * FROM user_information
     </select>
 
 </mapper>
