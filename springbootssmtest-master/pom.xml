@@ -70,10 +70,20 @@
       <artifactId>poi-ooxml</artifactId>
       <version>3.8</version>
     </dependency>
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus</artifactId>
+      <version>2.1.8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>1.1.6</version>
+    </dependency>
   </dependencies>
 
   <build>
-    <finalName>sxxxxx-1.0</finalName>
+    <finalName>michengxin-1.0</finalName>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -95,13 +105,17 @@
     </plugins>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <directory>src/main/resources/</directory>
         <filtering>true</filtering>
+        <includes>
+          <include>**/*.yml</include>
+        </includes>
       </resource>
       <resource>
         <directory>src/main/java</directory>
+        <filtering>true</filtering>
         <includes>
-          <include>**/*.xml</include>
+          <include>**/mapping/*.xml</include>
         </includes>
       </resource>
     </resources>
