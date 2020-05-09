@@ -1,6 +1,7 @@
 package org.springboot.config.ResponseData.constants;
 
-import org.springboot.config.IRestResponse;
+
+import org.springboot.config.ResponseData.interfac.IRestResponse;
 
 public enum CoreExceptionEnum implements IRestResponse {
     NO_CURRENT_USER(700, "当前没有登录的用户"),

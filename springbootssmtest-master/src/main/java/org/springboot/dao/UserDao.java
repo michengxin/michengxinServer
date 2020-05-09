@@ -1,12 +1,14 @@
 package org.springboot.dao;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+
 import org.springboot.entity.User;
-import org.springframework.stereotype.Repository;
+
+
+import java.util.List;
 
 @Mapper
-@Repository
 public interface UserDao {
-       User selectUserByWorkNum();
+       List<User> selectUserByWorkNum();
 }

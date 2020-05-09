@@ -1,4 +1,4 @@
-package org.springboot.config;
+package org.springboot.config.ResponseData.interfac;
 
 public interface IRestResponse {
     Integer getCode();
