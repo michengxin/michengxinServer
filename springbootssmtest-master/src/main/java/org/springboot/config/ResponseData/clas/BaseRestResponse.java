@@ -1,6 +1,7 @@
 package org.springboot.config.ResponseData.clas;
 
-import org.springboot.config.IRestResponse;
+
+import org.springboot.config.ResponseData.interfac.IRestResponse;
 import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;

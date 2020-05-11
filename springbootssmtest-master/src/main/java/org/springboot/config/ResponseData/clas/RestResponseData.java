@@ -1,8 +1,9 @@
 package org.springboot.config.ResponseData.clas;
 
-import org.springboot.config.IRestResponse;
-import org.springboot.config.ResponseData.clas.BaseRestResponse;
+
+
 import org.springboot.config.ResponseData.constants.CoreExceptionEnum;
+import org.springboot.config.ResponseData.interfac.IRestResponse;
 
 public class RestResponseData<T> extends BaseRestResponse {
     T data;

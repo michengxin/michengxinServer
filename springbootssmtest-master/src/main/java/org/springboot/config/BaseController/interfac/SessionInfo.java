@@ -7,7 +7,10 @@ package org.springboot.config.BaseController.interfac;
  * @Version 1.0
  */
 public interface SessionInfo {
-    String getUserId();
+    default String getUserId() {
+        return null;
+    }
 
-    void setUserId(String userId);
+    default void setUserId(String userId) {
+    }
 }

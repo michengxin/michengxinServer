@@ -8,4 +8,7 @@
           SELECT * FROM  user
     </select>
 
+    <select id="selectPhone" resultType="int">
+        SELECT COUNT(id) FROM user where telphone = #{id}
+    </select>
 </mapper>

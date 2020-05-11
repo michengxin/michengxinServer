@@ -2,8 +2,9 @@ package org.springboot.config.ResponseTable.clas;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.pagehelper.PageInfo;
-import org.springboot.config.IRestResponse;
+
 import org.springboot.config.ResponseData.clas.BaseRestResponse;
+import org.springboot.config.ResponseData.interfac.IRestResponse;
 
 import java.util.Collections;
 import java.util.List;

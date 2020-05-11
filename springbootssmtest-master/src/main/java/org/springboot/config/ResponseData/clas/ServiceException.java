@@ -1,6 +1,8 @@
 package org.springboot.config.ResponseData.clas;
 
-import org.springboot.config.IRestResponse;
+
+import org.springboot.config.ResponseData.constants.CoreExceptionEnum;
+import org.springboot.config.ResponseData.interfac.IRestResponse;
 
 public class ServiceException extends RuntimeException {
     private Integer code;
@@ -16,6 +18,9 @@ public class ServiceException extends RuntimeException {
         super(exception.getMessage());
         this.code = exception.getCode();
         this.errorMessage = exception.getMessage();
+    }
+
+    public ServiceException(CoreExceptionEnum noCurrentUser) {
     }
 
     public Integer getCode() {
