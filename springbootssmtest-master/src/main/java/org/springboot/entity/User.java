@@ -16,10 +16,16 @@ import org.springboot.config.SupperModel.SupperModel;
 @SuppressWarnings("serial")
 @TableName("t_user")
 public class User extends SupperModel<User> {
-    @TableField(exist = true)
+    @TableField()
     String username; //名字
-    @TableField(exist = true)
+    @TableField()
     String password;//密码
-    @TableField(exist = true)
+    @TableField()
     String salt;//加密盐
+    @TableField()
+    String userType;//用户类型
+    @TableField(exist = false)
+    String oldPassword;//旧密码
+    @TableField(exist = false)
+    String newPassword;//新密码
 }

@@ -13,4 +13,5 @@ import java.util.List;
 public interface UserDao extends SupperMapper<User> {
        List<User> selectUserByWorkNum();
        int selectPhone(@Param("id") String id);
+       User getUserInfo(@Param("username") String username,@Param("userType") String userType);
 }

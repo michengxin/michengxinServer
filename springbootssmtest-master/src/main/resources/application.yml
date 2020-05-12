@@ -17,9 +17,6 @@ server:
 #  mapper-locations: classpath:dao/**/*Dao.xml   # 2、配置Mybatis映射文件路径
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  #日志
-jwt:
-  # 单位秒  此处为 3天
-  expiration: 259200
-  secret: michengxin  #密匙
+
 
 

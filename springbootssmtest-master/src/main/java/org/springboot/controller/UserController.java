@@ -1,6 +1,9 @@
 package org.springboot.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -10,11 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springboot.config.BaseController.abstrac.BaseController;
 import org.springboot.config.ResponseData.clas.RestResponseData;
-import org.springboot.config.ResponseTable.clas.RestResponseTable;
-import org.springboot.config.jwt.JwtToken;
 import org.springboot.config.redis.RedisEnum;
 import org.springboot.dao.UserDao;
 import org.springboot.entity.User;
+import org.springboot.service.impl.AuthService;
 import org.springboot.service.impl.UserService;
 import org.springboot.utils.MD5Util;
 import org.springboot.utils.RedisUtils;
@@ -24,8 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,12 +43,13 @@ public class UserController extends BaseController {
 
   @Autowired
   UserService userService;
-  @Autowired
-  JwtToken jwtToken;
+
   @Autowired
   RedisUtils redisUtils;
   @Resource
   UserDao userDao;
+  @Autowired
+  AuthService authService;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -90,12 +92,9 @@ public class UserController extends BaseController {
   @RequestMapping("/login")
   public RestResponseData login(UserVo UserVo){
     LOGGER.info("日志打印测试");
-    Map<String, Object> claims = new HashMap<>();
-    // 1. 验证用户名和密码
-    // 2. 验证成功生成token
-//    JSONObject jsonObject = new JSONObject();
-//    jsonObject.put("token",jwtToken.generateToken(userId));
-    return new RestResponseData(null);
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("token",this.authService.login(UserVo));
+    return new RestResponseData(jsonObject);
   }
 
   //测试JWT注册
@@ -116,5 +115,35 @@ public class UserController extends BaseController {
     int result = userService.insertUser(user);
     return new RestResponseData(user);
   }
-
+  //测试mybatis修改
+  @ApiOperation(value = "测试mybatis修改",notes = "测试mybatis修改")
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "username",value = "用户名",required = true),
+          @ApiImplicitParam(name = "oldPassword",value = "旧密码",required = true),
+          @ApiImplicitParam(name = "newPassword",value = "新密码",required = true)
+  })
+  @RequestMapping("/update")
+  public RestResponseData update(User user){
+    LOGGER.info("日志打印测试");
+    QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+    queryWrapper.eq("username",user.getUsername());
+    List<User> userList =  userDao.selectList(queryWrapper);
+    User sysUser = userList.get(0);
+    UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+    updateWrapper.eq("username",user.getUsername());
+    String userSalt = null;
+    if(StringUtils.isNotBlank(sysUser.getSalt())){
+      userSalt= sysUser.getSalt();
+    }else {
+      userSalt =UUIDUtils.generateUUID32Lower();
+    }
+    String md5oldPwd = MD5Util.encodeByMD5(MD5Util.encodeByMD5(user.getOldPassword()));
+    if (!sysUser.getPassword().contains(md5oldPwd)){
+      return new RestResponseData("原密码错误");// 与原密码不匹配
+    }
+    sysUser.setPassword(MD5Util.encodeByMD5(MD5Util.encodeByMD5(user.getNewPassword())));
+    //修改登录表t_ss_user
+    int result = userDao.update(sysUser,updateWrapper);
+    return new RestResponseData(user);
+  }
 }

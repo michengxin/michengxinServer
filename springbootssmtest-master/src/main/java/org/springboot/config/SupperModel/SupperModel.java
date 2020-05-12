@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,7 +30,8 @@ public abstract class SupperModel <T extends SupperModel<?>> extends Model<T> {
     @TableField(
             fill = FieldFill.INSERT_UPDATE
     )
-    Date lastUpdateTime;
+
+     Date lastUpdateTime;
 
     public SupperModel() {
     }

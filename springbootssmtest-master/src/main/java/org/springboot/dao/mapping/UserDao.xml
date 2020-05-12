@@ -5,10 +5,14 @@
 
 
     <select id="selectUserByWorkNum" resultType="org.springboot.entity.User" >
-          SELECT * FROM  user
+          SELECT * FROM  t_user
     </select>
 
     <select id="selectPhone" resultType="int">
-        SELECT COUNT(id) FROM user where telphone = #{id}
+        SELECT COUNT(id) FROM t_user where telphone = #{id}
+    </select>
+
+    <select id="getUserInfo" resultType="org.springboot.entity.User">
+       SELECT * FROM t_user WHERE username = #{username} AND user_type = #{userType}
     </select>
 </mapper>

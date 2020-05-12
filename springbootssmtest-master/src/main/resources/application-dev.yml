@@ -14,7 +14,7 @@ logging:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/myproject?characterEncoding=utf8&useSSL=false&useUnicode=true&allowMultiQueries=true&serverTimezone=GMT
+    url: jdbc:mysql://localhost:3306/myproject?characterEncoding=utf8&useSSL=false&useUnicode=true&allowMultiQueries=true&serverTimezone=GMT%2B8
     username: root
     password: 123456
     # 使用hikari数据源
@@ -61,7 +61,7 @@ mybatis-plus:
       #逻辑删除配置
       logic-delete-value: 0
       logic-not-delete-value: 1
-      db-type: MY_SQL
+      db-type: MYSQL
 
     refresh: true
       #自定义填充策略接口实现
