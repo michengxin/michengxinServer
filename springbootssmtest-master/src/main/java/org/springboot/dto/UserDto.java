@@ -1,29 +1,27 @@
-package org.springboot.entity;
-
-
+package org.springboot.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import org.springboot.config.SupperModel.SupperModel;
+import org.springboot.entity.Department;
+import org.springboot.entity.Enterprise;
+import org.springboot.entity.Permission;
+import org.springboot.entity.Role;
 
 import java.util.Date;
+import java.util.List;
 
 /**
- * @author michengxin
- * @description
- * @date 2020/5/11 14:55
+ * @ClassName UserDto
+ * @Description TODO
+ * @Author mcx
+ * @Date 2020/5/15 9:24
+ * @Version 1.0
  */
 @Data
-@SuppressWarnings("serial")
-@TableName("t_sys_user")
-public class User extends SupperModel<User> {
+public class UserDto {
     @TableField()
     String userCode; //名字
-    @TableField()
-    String password;//密码
-    @TableField()
-    String salt;//加密盐
+
     @TableField()
     String userType;//用户类型
     @TableField()
@@ -45,6 +43,16 @@ public class User extends SupperModel<User> {
     @TableField()
     Date entryTime;//入职日期
 
+    @TableField(exist = false)
+    List<Enterprise> enterprises;//公司list
+    @TableField(exist = false)
+    List<Department> departments;//部门list
+    @TableField(exist = false)
+    List<Role> roles;//角色list
+    @TableField(exist = false)
+    List<Permission> permissionMenus;//权限list(menu)
+    @TableField(exist = false)
+    List<Permission> permissionButtons;//权限list(button)
     @TableField(exist = false)
     String oldPassword;//旧密码
     @TableField(exist = false)

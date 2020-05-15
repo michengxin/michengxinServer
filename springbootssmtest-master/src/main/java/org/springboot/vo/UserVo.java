@@ -11,6 +11,6 @@ import lombok.Data;
  */
 @Data
 public class UserVo {
-    String username;
+    String userCode;
     String password;
 }

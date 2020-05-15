@@ -1,8 +1,10 @@
 package org.springboot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springboot.entity.User;
+import org.springboot.dto.UserDto;
+import org.springboot.entity.*;
 import org.springboot.dao.UserDao;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -31,4 +33,37 @@ public class UserService {
     return userDao.insert(user);
   }
 
+  public User checkUserId(String userId){
+    QueryWrapper queryWrapper = new QueryWrapper();
+    return  userDao.selectById(userId);
+  }
+
+  public UserDto selectGetUserInfo(String userId){
+    //根据前端返回过来的token解析获取用户详细数据，获取该用户所属角色下的所有权限
+    User user = userDao.selectGetUserInfo(userId);
+    UserDto userDto = new UserDto();
+    userDto.setUserCode(user.getUserCode());
+    userDto.setUserType(user.getUserType());
+    userDto.setName(user.getName());
+    userDto.setEmail(user.getEmail());
+    userDto.setPhone(user.getPhone());
+    userDto.setDimissionTime(user.getDimissionTime());
+    userDto.setEntryTime(user.getEntryTime());
+    //公司list
+    List<Enterprise> enterprises = userDao.selectEnterpriseByUserId(userId);
+    userDto.setEnterprises(enterprises);
+    //部门list
+    List<Department> departments = userDao.selectDepartmentsByUserId(userId);
+    userDto.setDepartments(departments);
+    //角色list
+    List<Role> roles = userDao.selectRolesByUserId(userId);
+    userDto.setRoles(roles);
+    //权限list(menu)
+    List<Permission> permissionMenus = userDao.selectPermissionMenusByRoles(roles);
+    userDto.setPermissionMenus(permissionMenus);
+    //权限list(button)
+    List<Permission> permissionsButtons = userDao.selectPermissionButtonsByRoles(roles);
+    userDto.setPermissionButtons(permissionsButtons);
+    return userDto;
+  }
 }

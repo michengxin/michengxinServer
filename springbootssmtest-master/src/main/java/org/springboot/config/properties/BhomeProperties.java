@@ -1,6 +1,8 @@
 package org.springboot.config.properties;
 
 import cn.hutool.core.util.ArrayUtil;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.regex.Pattern;
 
@@ -11,8 +13,14 @@ import java.util.regex.Pattern;
  * @Date 2020/5/9 17:53
  * @Version 1.0
  */
+@Configuration
+@ConfigurationProperties(
+        prefix = "bhome"
+)
 public class BhomeProperties {
+
     private String[] excludedUrl;
+
     private String[] urlPatterns = new String[]{"/*"};
     private Pattern excludedPattern;
 

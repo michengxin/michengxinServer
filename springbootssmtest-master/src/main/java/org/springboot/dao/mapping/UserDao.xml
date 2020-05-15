@@ -5,14 +5,61 @@
 
 
     <select id="selectUserByWorkNum" resultType="org.springboot.entity.User" >
-          SELECT * FROM  t_user
+          SELECT * FROM  t_sys_user
     </select>
 
     <select id="selectPhone" resultType="int">
-        SELECT COUNT(id) FROM t_user where telphone = #{id}
+        SELECT COUNT(id) FROM t_sys_user where telphone = #{id}
     </select>
 
     <select id="getUserInfo" resultType="org.springboot.entity.User">
-       SELECT * FROM t_user WHERE username = #{username} AND user_type = #{userType}
+       SELECT * FROM t_sys_user WHERE user_code = #{username} AND user_type = #{userType}
+    </select>
+
+    <select id="selectGetUserInfo" resultType="org.springboot.entity.User">
+       SELECT * FROM t_sys_user WHERE id = #{userId}
+    </select>
+
+    <select id="selectEnterpriseByUserId" resultType="org.springboot.entity.Enterprise">
+       SELECT tbe.id,tbe.name FROM t_sys_user tsu
+       INNER JOIN t_user_enterprise tue ON tsu.id = tue.sys_user_id
+       INNER JOIN t_base_enterprise tbe ON tbe.id = tue.company_id
+       WHERE tsu.id =#{userId}
+    </select>
+
+    <select id="selectDepartmentsByUserId" resultType="org.springboot.entity.Department">
+       SELECT tbd.dep_code,tbd.dep_name FROM t_sys_user tsu
+       INNER JOIN t_sys_user_department tsud ON tsu.id = tsud.sys_user_id
+       INNER JOIN t_base_department tbd ON tbd.id = tsud.sys_department_id
+       WHERE tsu.id =#{userId}
+    </select>
+
+    <select id="selectRolesByUserId" resultType="org.springboot.entity.Role">
+       SELECT tsr.code,tsr.name FROM t_sys_user tsu
+       INNER JOIN t_sys_user_role tsud ON tsu.id = tsud.sys_user_id
+       INNER JOIN t_sys_role tsr ON tsr.id = tsud.sys_role_id
+       WHERE tsu.id =#{userId}
+    </select>
+
+    <select id="selectPermissionMenusByRoles" resultType="org.springboot.entity.Permission">
+        SELECT tsp.* FROM t_sys_role tsr
+        INNER JOIN t_sys_role_permission tsrp ON tsr.id = tsrp.sys_role_id
+        INNER JOIN t_sys_permission tsp ON tsp.id = tsrp.sys_permission_id
+        WHERE tsr.code IN
+        <foreach collection="roles" separator="," open="(" close=")" item="item" >
+            #{item.code}
+        </foreach>
+        AND tsp.type = 'menu'
+    </select>
+
+    <select id="selectPermissionButtonsByRoles" resultType="org.springboot.entity.Permission">
+        SELECT tsp.* FROM t_sys_role tsr
+        INNER JOIN t_sys_role_permission tsrp ON tsr.id = tsrp.sys_role_id
+        INNER JOIN t_sys_permission tsp ON tsp.id = tsrp.sys_permission_id
+        WHERE tsr.code IN
+        <foreach collection="roles" separator="," open="(" close=")" item="item" >
+            #{item.code}
+        </foreach>
+        AND tsp.type = 'button'
     </select>
 </mapper>

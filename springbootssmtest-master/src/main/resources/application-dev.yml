@@ -1,5 +1,6 @@
 spring:
-  profiles: dev
+  profiles:
+    include: bhome
 
 ##logging     开发
 logging:

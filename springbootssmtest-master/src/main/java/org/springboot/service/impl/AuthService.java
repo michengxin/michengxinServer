@@ -6,9 +6,11 @@ import org.springboot.config.jwt.enu.BoxPlatformEnum;
 import org.springboot.config.jwt.util.JwtTokenUtil;
 import org.springboot.config.properties.CodeConstants;
 import org.springboot.config.properties.Constant;
+import org.springboot.config.redis.CacheGroupKeyConstants;
 import org.springboot.dao.UserDao;
 import org.springboot.entity.User;
 import org.springboot.utils.MD5Util;
+import org.springboot.utils.RedisUtils;
 import org.springboot.utils.SecurityFilterUtil;
 import org.springboot.vo.UserVo;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @ClassName authService
@@ -30,6 +33,8 @@ public class AuthService {
     UserDao userDao;
     @Resource
     JwtTokenUtil jwtTokenUtil;
+    @Resource
+    RedisUtils redisUtils;
     /**
      * 用户登录
      *
@@ -39,7 +44,7 @@ public class AuthService {
     @Transactional
     public String login(UserVo userVo) {
         BoxPlatformEnum platform = SecurityFilterUtil.getPlatform();
-        return login(userVo.getUsername(), userVo.getPassword(), platform);
+        return login(userVo.getUserCode(), userVo.getPassword(), platform);
     }
     /**
      * 登录方法
@@ -58,7 +63,6 @@ public class AuthService {
         }
         String md5Pwd = MD5Util.encodeByMD5(MD5Util.encodeByMD5(password));
         if(md5Pwd.equals(user.getPassword())){
-
             //写入openid  生成token返回
             return createToken(user.getId(),platform);
         }else{
@@ -70,7 +74,7 @@ public class AuthService {
         Map<String, Object> claims = new HashMap<>();
         claims.put(Constant.PLATFORM, platform.name());
         String token = jwtTokenUtil.generateToken(userId, claims);
-//        redisService.set(CacheGroupKeyConstants.USER_TOKEN.concat(":").concat(platform.name()) + ":" + userId, token, jwtTokenUtil.getExpireTime());
+        //redisUtils.set(CacheGroupKeyConstants.USER_TOKEN.concat(":").concat(platform.name()) + ":" + userId, token, jwtTokenUtil.getExpireTime(), TimeUnit.SECONDS);
         return token;
     }
 }

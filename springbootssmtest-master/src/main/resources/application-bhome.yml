@@ -1,0 +1,6 @@
+bhome:
+  excludedUrl:
+
+    - /api/test/login
+    - /api/test/register
+  urlPatterns: /api/*

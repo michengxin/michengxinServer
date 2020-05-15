@@ -4,7 +4,7 @@ spring:
 server:
   servlet:
     context-path: /mcx    #添加前缀
-  port: 8585
+  port: 8010
   tomcat:
     uri-encoding: UTF-8
 #  datasource:   # 1、配置数据源

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -13,11 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springboot.config.BaseController.abstrac.BaseController;
 import org.springboot.config.ResponseData.clas.RestResponseData;
+import org.springboot.config.ResponseData.clas.ServiceException;
+import org.springboot.config.ResponseData.constants.CoreExceptionEnum;
+import org.springboot.config.jwt.properties.JwtProperties;
+import org.springboot.config.jwt.util.JwtTokenUtil;
 import org.springboot.config.redis.RedisEnum;
 import org.springboot.dao.UserDao;
 import org.springboot.entity.User;
 import org.springboot.service.impl.AuthService;
 import org.springboot.service.impl.UserService;
+import org.springboot.utils.HttpContext;
 import org.springboot.utils.MD5Util;
 import org.springboot.utils.RedisUtils;
 import org.springboot.utils.UUIDUtils;
@@ -32,14 +38,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author michengxin
  * @description
- * @date 2019/12/27/027
+ * @date 2020/5/11 14:55
  */
 @CrossOrigin
 @RestController()
-@Api(tags = "用户API")
-@RequestMapping("api/user")
+@Api(tags = "测试API")
+@RequestMapping("api/test")
 @Slf4j
-public class UserController extends BaseController {
+public class TestController extends BaseController {
 
   @Autowired
   UserService userService;
@@ -50,15 +56,19 @@ public class UserController extends BaseController {
   UserDao userDao;
   @Autowired
   AuthService authService;
+  @Autowired
+  JwtTokenUtil jwtTokenUtil;
+  @Autowired
+  JwtProperties jwtProperties;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
 
     //测试redis
     @ApiOperation(value = "测试redis",notes = "测试redis")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id",value = "id",required = true)
     })
-  @RequestMapping(value = "/textRedis")
+  @PostMapping(value = "/textRedis")
   public String textRedis( String id){
       log.info("开始测试");
     //查询缓存中是否存在
@@ -86,10 +96,10 @@ public class UserController extends BaseController {
   //测试JWT登录
   @ApiOperation(value = "测试JWT登录",notes = "测试JWT登录")
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "username",value = "用户名",required = true),
+          @ApiImplicitParam(name = "userCode",value = "用户名",required = true),
           @ApiImplicitParam(name = "password",value = "密码",required = true)
   })
-  @RequestMapping("/login")
+  @PostMapping("/login")
   public RestResponseData login(UserVo UserVo){
     LOGGER.info("日志打印测试");
     JSONObject jsonObject = new JSONObject();
@@ -100,10 +110,10 @@ public class UserController extends BaseController {
   //测试JWT注册
   @ApiOperation(value = "测试JWT注册",notes = "测试JWT注册")
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "username",value = "用户名",required = true),
+          @ApiImplicitParam(name = "userCode",value = "用户名",required = true),
           @ApiImplicitParam(name = "password",value = "密码",required = true)
   })
-  @RequestMapping("/register")
+  @PostMapping("/register")
   public RestResponseData register(User user){
     LOGGER.info("日志打印测试");
     String userSalt = UUIDUtils.generateUUID32Lower();
@@ -118,19 +128,19 @@ public class UserController extends BaseController {
   //测试mybatis修改
   @ApiOperation(value = "测试mybatis修改",notes = "测试mybatis修改")
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "username",value = "用户名",required = true),
+          @ApiImplicitParam(name = "userCode",value = "用户名",required = true),
           @ApiImplicitParam(name = "oldPassword",value = "旧密码",required = true),
           @ApiImplicitParam(name = "newPassword",value = "新密码",required = true)
   })
-  @RequestMapping("/update")
+  @PostMapping("/update")
   public RestResponseData update(User user){
     LOGGER.info("日志打印测试");
     QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-    queryWrapper.eq("username",user.getUsername());
+    queryWrapper.eq("user_code",user.getUserCode());
     List<User> userList =  userDao.selectList(queryWrapper);
     User sysUser = userList.get(0);
     UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
-    updateWrapper.eq("username",user.getUsername());
+    updateWrapper.eq("user_code",user.getUserCode());
     String userSalt = null;
     if(StringUtils.isNotBlank(sysUser.getSalt())){
       userSalt= sysUser.getSalt();
@@ -146,4 +156,44 @@ public class UserController extends BaseController {
     int result = userDao.update(sysUser,updateWrapper);
     return new RestResponseData(user);
   }
+
+  //验证token 是否有效
+  @ApiOperation(value = "验证token 是否有效",notes = "验证token 是否有效")
+  @ApiImplicitParams({
+
+  })
+  @PostMapping("/AuthToken")
+  public RestResponseData AuthToken(){
+    LOGGER.info("日志打印测试");
+//jwtTokenUtil
+    String token  = HttpContext.getRequest().getHeader(jwtProperties.getHeader());
+    token = token.replace("Bearer ","");
+    Claims claimFromToken = jwtTokenUtil.getClaimFromToken(token);
+    String userId = claimFromToken.get("sub").toString();
+    System.out.println(userId);
+    User user = userService.checkUserId(userId);
+    if(user !=null){//验证通过 返回用户资源
+      return new RestResponseData(user);
+    }else{//验证不通过 返回错误信息
+      throw new ServiceException(CoreExceptionEnum.NO_CURRENT_USER);
+    }
+  }
+  //测试JWT登出
+  @ApiOperation(value = "测试JWT登出",notes = "测试JWT登出")
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "用户id",value = "userId")
+
+  })
+  @PostMapping("/logout")
+  public RestResponseData login(String  userId){
+    LOGGER.info("日志打印测试");
+
+    if(userId==null || userId ==""){
+      userId = this.getUserId();
+    }
+    return new RestResponseData(userId);
+  }
+
+
+
 }
