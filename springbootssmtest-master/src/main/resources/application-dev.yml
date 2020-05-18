@@ -20,6 +20,7 @@ spring:
     password: 123456
     # 使用hikari数据源
     type: com.zaxxer.hikari.HikariDataSource
+
     minimum-idle: 5
     maximum-pool-size: 15
     auto-commit: true
@@ -28,6 +29,10 @@ spring:
     max-lifetime: 1800000
     connection-timeout: 30000
     connection-test-query: SELECT 1
+---
+spring:
+  activemq:
+    broker-url
 ---
 spring:
   redis:

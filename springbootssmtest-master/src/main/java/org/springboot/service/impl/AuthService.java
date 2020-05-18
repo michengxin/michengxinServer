@@ -61,7 +61,7 @@ public class AuthService {
         if(user == null){
             throw new ServiceException(CodeConstants.USER_LOGIN_ERROR,"用户名不存在或已锁定");
         }
-        String md5Pwd = MD5Util.encodeByMD5(MD5Util.encodeByMD5(password));
+        String md5Pwd = MD5Util.encodeByMD5(MD5Util.encodeByMD5(password).concat(user.getSalt()));
         if(md5Pwd.equals(user.getPassword())){
             //写入openid  生成token返回
             return createToken(user.getId(),platform);

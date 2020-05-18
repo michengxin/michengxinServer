@@ -7,6 +7,7 @@ server:
   port: 8010
   tomcat:
     uri-encoding: UTF-8
+
 #  datasource:   # 1、配置数据源
 #    username: root
 #    password:

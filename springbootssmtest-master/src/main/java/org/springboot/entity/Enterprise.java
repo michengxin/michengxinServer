@@ -1,6 +1,8 @@
 package org.springboot.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 import org.springboot.config.SupperModel.SupperModel;
 
 import java.util.List;
@@ -12,16 +14,18 @@ import java.util.List;
  * @Date 2020/5/14 16:53
  * @Version 1.0
  */
+@Data
+@TableName("t_base_enterprise")
 public class Enterprise extends SupperModel<Enterprise> {
-    @TableField()
+
     String name;//公司名称
-    @TableField()
+
     String code;//公司编码
-    @TableField()
+
     Integer sort;  //排序值
-    @TableField()
+
     String isAll;//是否全资公司 1-全资公司  0-合资公司
-    @TableField()
+
     String registeName;//公司注册全称
     @TableField(exist = false)
     String label;//配合前端字段

@@ -60,6 +60,7 @@ public class UserService {
     userDto.setRoles(roles);
     //权限list(menu)
     List<Permission> permissionMenus = userDao.selectPermissionMenusByRoles(roles);
+
     userDto.setPermissionMenus(permissionMenus);
     //权限list(button)
     List<Permission> permissionsButtons = userDao.selectPermissionButtonsByRoles(roles);
