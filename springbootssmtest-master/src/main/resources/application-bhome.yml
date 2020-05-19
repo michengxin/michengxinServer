@@ -3,4 +3,6 @@ bhome:
 
     - /api/test/login
     - /api/test/register
+    - /api/test/send
+    - /api/freemark/index
   urlPatterns: /api/*

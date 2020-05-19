@@ -29,6 +29,12 @@ public class UserService {
       return "0";
     }
   }
+
+  public List<User> selectAllUser(){
+    QueryWrapper wq = new QueryWrapper();
+    return userDao.selectList(wq);
+  }
+
   public int insertUser(User user){
     return userDao.insert(user);
   }

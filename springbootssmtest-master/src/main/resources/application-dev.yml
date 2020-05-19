@@ -20,7 +20,6 @@ spring:
     password: 123456
     # 使用hikari数据源
     type: com.zaxxer.hikari.HikariDataSource
-
     minimum-idle: 5
     maximum-pool-size: 15
     auto-commit: true
@@ -32,7 +31,21 @@ spring:
 ---
 spring:
   activemq:
-    broker-url
+    # failover:(tcp://localhost:61616,tcp://localhost:61617)
+    # tcp://localhost:61616
+    broker-url: tcp://localhost:61616
+    #true 表示使用内置的MQ，false则连接服务器
+    in-memory: false
+    #true表示使用连接池；false时，每发送一条数据创建一个连接
+    enabled: true
+    #连接池最大连接数
+    max-connections: 10
+    #空闲的连接过期时间，默认为30秒
+    idle-timeout: 30000
+    #强制的连接过期时间，与idleTimeout的区别在于：idleTimeout是在连接空闲一段时间失效，而expiryTimeout不管当前连接的情况，只要达到指定时间就失效。默认为0，never
+    expiry-timeout: 0
+
+
 ---
 spring:
   redis:
@@ -68,7 +81,6 @@ mybatis-plus:
       logic-delete-value: 0
       logic-not-delete-value: 1
       db-type: MYSQL
-
     refresh: true
       #自定义填充策略接口实现
       #meta-object-handler: com.baomidou.springboot.xxx
@@ -87,6 +99,23 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+---
+spring:
+  freemarker:
+    enabled: true #是否启用freemarker
+    template-loader-path: classpath:/template/freeMarker/ #设定模板的加载路径，多个以逗号分隔
+    suffix: .ftl #设定模板的后缀
+    content-type: text/html
+    check-template-location: true #是否检查模板位置是否存在
+    cache: false #是否启用模板缓存
+    charset: UTF-8 #模板编码
+    #一些常用配置
+    allow-request-override: false #是否允许HttpServletRequest属性覆盖(隐藏)控制器生成的同名模型属性
+    allow-session-override: false #是否允许HttpSession属性覆盖(隐藏)控制器生成的同名模型属性
+    expose-request-attributes: false #设定所有request的属性在merge到模板的时候，是否要都添加到model中
+    expose-session-attributes: false #是否在merge模板的时候，将HttpSession属性都添加到model中
+    expose-spring-macro-helpers: true #设定是否以springMacroRequestContext的形式暴露RequestContext给Spring’s macro library使用
+    prefer-file-system-access: true #是否优先从文件系统加载template，以支持热加载，默认为true
 
 
 

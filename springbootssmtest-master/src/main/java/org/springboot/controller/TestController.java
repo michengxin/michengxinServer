@@ -29,9 +29,11 @@ import org.springboot.utils.RedisUtils;
 import org.springboot.utils.UUIDUtils;
 import org.springboot.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.jms.Queue;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -60,6 +62,13 @@ public class TestController extends BaseController {
   JwtTokenUtil jwtTokenUtil;
   @Autowired
   JwtProperties jwtProperties;
+  //注入存放消息的队列，用于下列方法一
+  @Autowired
+  private Queue queue;
+
+  //注入springboot封装的工具类
+  @Autowired
+  private JmsMessagingTemplate jmsMessagingTemplate;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TestController.class);
 
@@ -194,6 +203,58 @@ public class TestController extends BaseController {
     return new RestResponseData(userId);
   }
 
+  //测试消息队列
+  @ApiOperation(value = "测试消息队列",notes = "测试消息队列")
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "消息",value = "message")
 
+  })
+  @RequestMapping("send")
+  public void send(String message) {
+    //方法一：添加消息到消息队列
+    jmsMessagingTemplate.convertAndSend(queue, message);
+    //方法二：这种方式不需要手动创建queue，系统会自行创建名为test的队列
+    //jmsMessagingTemplate.convertAndSend("test", name);
+  }
+  //测试openid
+  @ApiOperation(value = "测试openid",notes = "测试openid")
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "用户码",value = "code")
+
+  })
+  @RequestMapping("getOpenid")
+  public void getOpenid(String code) {
+      log.info(code);
+  }
+
+  //测试redis同步问题编号流水增加方法
+  @ApiOperation(value = "测试redis同步问题编号流水增加方法",notes = "测试redis同步问题编号流水增加方法")
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "流水存的键",value = "key")
+  })
+  @RequestMapping("sysnredis")
+  public RestResponseData sysnredis(String key) {
+
+    boolean hasKey = redisUtils.exists(key);
+    String str = "";
+    if(hasKey){
+      //获取缓存
+      Object object =  redisUtils.get(key);
+      log.info("从缓存获取的数据"+ object);
+      str = object.toString();
+    }else{
+      //从数据库中获取信息
+      log.info("从数据库中获取数据");
+      List<User> userList = userService.selectAllUser();
+      //数据插入缓存（set中的参数含义：key值，user对象，缓存存在时间10（long类型），时间单位）
+      if(userList != null && userList.size()>0){
+        redisUtils.set(key, RedisEnum.NUMBER,10L, TimeUnit.MINUTES);
+        log.info("数据插入缓存" + userList);
+      }else{
+        log.info("缓存,数据库均没有该数据" + userList);
+      }
+    }
+    return userList;
+  }
 
 }
