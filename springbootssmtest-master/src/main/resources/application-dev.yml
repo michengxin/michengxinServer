@@ -37,13 +37,18 @@ spring:
     #true 表示使用内置的MQ，false则连接服务器
     in-memory: false
     #true表示使用连接池；false时，每发送一条数据创建一个连接
-    enabled: true
-    #连接池最大连接数
-    max-connections: 10
-    #空闲的连接过期时间，默认为30秒
-    idle-timeout: 30000
-    #强制的连接过期时间，与idleTimeout的区别在于：idleTimeout是在连接空闲一段时间失效，而expiryTimeout不管当前连接的情况，只要达到指定时间就失效。默认为0，never
-    expiry-timeout: 0
+#    pool:
+#      enabled: true
+#      #连接池最大连接数
+#      max-connections: 10
+#      #空闲的连接过期时间，默认为30秒
+#      idle-timeout: 30000
+#      #强制的连接过期时间，与idleTimeout的区别在于：idleTimeout是在连接空闲一段时间失效，而expiryTimeout不管当前连接的情况，只要达到指定时间就失效。默认为0，never
+#      expiry-timeout: 0
+    # mq默认的提供的是queue, 若要topic需要如下配置
+    non-blocking-redelivery: false
+  jms:
+    pub-sub-domain: true
 
 
 ---

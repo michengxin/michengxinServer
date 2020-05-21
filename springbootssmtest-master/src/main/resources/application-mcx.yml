@@ -1,8 +1,10 @@
 bhome:
   excludedUrl:
-
     - /api/test/login
     - /api/test/register
     - /api/test/send
     - /api/freemark/index
+    - /api/test/sysnredis
+    - /api/test/removeKey
+    - /api/test/redisKey
   urlPatterns: /api/*

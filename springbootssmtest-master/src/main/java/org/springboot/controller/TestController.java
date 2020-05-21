@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springboot.config.BaseController.abstrac.BaseController;
@@ -33,9 +34,14 @@ import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.jms.Destination;
 import javax.jms.Queue;
+import javax.jms.Topic;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author michengxin
@@ -65,7 +71,9 @@ public class TestController extends BaseController {
   //注入存放消息的队列，用于下列方法一
   @Autowired
   private Queue queue;
-
+  //注入存放消息的订阅
+  @Autowired
+  private Topic topic;
   //注入springboot封装的工具类
   @Autowired
   private JmsMessagingTemplate jmsMessagingTemplate;
@@ -215,6 +223,8 @@ public class TestController extends BaseController {
     jmsMessagingTemplate.convertAndSend(queue, message);
     //方法二：这种方式不需要手动创建queue，系统会自行创建名为test的队列
     //jmsMessagingTemplate.convertAndSend("test", name);
+    //订阅发布模式
+//    jmsMessagingTemplate.convertAndSend(topic, message);
   }
   //测试openid
   @ApiOperation(value = "测试openid",notes = "测试openid")
@@ -226,35 +236,67 @@ public class TestController extends BaseController {
   public void getOpenid(String code) {
       log.info(code);
   }
-
-  //测试redis同步问题编号流水增加方法
-  @ApiOperation(value = "测试redis同步问题编号流水增加方法",notes = "测试redis同步问题编号流水增加方法")
+  //删除redis键
+  @ApiOperation(value = "删除redis键",notes = "删除redis键")
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "key",value = "key")
+  })
+  @RequestMapping("removeKey")
+  public void removeKey(String key) {
+    redisUtils.remove(key);
+  }
+  //测试redis查询列表
+  @ApiOperation(value = "测试redis",notes = "测试redis")
   @ApiImplicitParams({
           @ApiImplicitParam(name = "流水存的键",value = "key")
   })
   @RequestMapping("sysnredis")
   public RestResponseData sysnredis(String key) {
-
+      //在直接修改该键关联数据的数据库时，记住同步该key
     boolean hasKey = redisUtils.exists(key);
-    String str = "";
+    List<User> userList = new ArrayList<>();
     if(hasKey){
       //获取缓存
       Object object =  redisUtils.get(key);
-      log.info("从缓存获取的数据"+ object);
-      str = object.toString();
+      if (object instanceof ArrayList<?>) {
+        userList = (List<User>) object;
+      }
+      log.info("从缓存获取的数据"+ userList);
     }else{
       //从数据库中获取信息
       log.info("从数据库中获取数据");
-      List<User> userList = userService.selectAllUser();
+      userList = userService.selectAllUser();
       //数据插入缓存（set中的参数含义：key值，user对象，缓存存在时间10（long类型），时间单位）
       if(userList != null && userList.size()>0){
-        redisUtils.set(key, RedisEnum.NUMBER,10L, TimeUnit.MINUTES);
+        redisUtils.set(key,userList,10L, TimeUnit.MINUTES);
         log.info("数据插入缓存" + userList);
       }else{
         log.info("缓存,数据库均没有该数据" + userList);
       }
     }
-    return userList;
+    return new RestResponseData(userList);
   }
-
+  //测试redis同步问题编号流水增加方法
+  @ApiOperation(value = "测试redis同步问题编号流水增加方法",notes = "测试redis同步问题编号流水增加方法")
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "key",value = "key")
+  })
+  @RequestMapping("redisKey")
+  public String redisKey(String key) {
+    boolean hasKey = redisUtils.exists(key);
+    DecimalFormat df = new DecimalFormat("00000");          //设置格式
+    AtomicInteger z = new AtomicInteger(); //number线程安全方式增加或减少的对象
+    String str = "";
+    if(hasKey){
+      Object o  = redisUtils.get(key);
+      z.set(Integer.valueOf(o.toString())+1);
+      str = df.format(z.get());
+      redisUtils.set(key,str,1L, TimeUnit.DAYS);
+    }else{
+      z.set(0);
+      str = df.format(z.get());
+      redisUtils.set(key,str,1L, TimeUnit.DAYS);
+    }
+    return str;
+  }
 }

@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 @Configuration
 @ConfigurationProperties(
-        prefix = "bhome"
+        prefix = "mcx"
 )
 public class BhomeProperties {
 

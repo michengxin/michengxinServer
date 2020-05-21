@@ -18,7 +18,7 @@ import javax.servlet.Filter;
  */
 @Configuration
 @ConfigurationProperties(
-        prefix = "bhome"
+        prefix = "mcx"
 )
 public class ConfigurationFilter {
     public ConfigurationFilter() {
