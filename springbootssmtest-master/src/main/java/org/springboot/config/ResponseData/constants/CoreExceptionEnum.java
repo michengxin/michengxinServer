@@ -16,8 +16,9 @@ public enum CoreExceptionEnum implements IRestResponse {
     PAGE_NULL(404, "请求页面不存在"),
     IO_ERROR(500, "流读取异常"),
     SERVICE_ERROR(500, "服务器异常"),
-    REMOTE_SERVICE_NULL(404, "远程服务不存在");
-
+    REMOTE_SERVICE_NULL(404, "远程服务不存在"),
+    TOKEN_REFRESH(403, "刷新token"),
+    MANERGER_USERCODE(201, "管理员账号登录");
     private Integer code;
     private String message;
 

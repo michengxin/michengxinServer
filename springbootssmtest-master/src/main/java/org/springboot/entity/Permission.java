@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.springboot.config.SupperModel.SupperModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @ClassName Permission
  * @Description TODO
@@ -35,5 +38,6 @@ public class Permission extends SupperModel<Permission> {
     Integer available;//是否可用,1：可用，0不可用
     @TableField()
     String kind;//种类（1:网页端,2:移动端）
-
+    @TableField(exist = false)
+    List<Permission> sonPermissions = new ArrayList<Permission>();
 }

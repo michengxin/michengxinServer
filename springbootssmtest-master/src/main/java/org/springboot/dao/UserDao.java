@@ -19,5 +19,5 @@ public interface UserDao extends SupperMapper<User> {
        List<Department> selectDepartmentsByUserId(@Param("userId") String userId);
        List<Role> selectRolesByUserId(@Param("userId") String userId);
        List<Permission> selectPermissionMenusByRoles(@Param("roles") List<Role> roles);
-       List<Permission> selectPermissionButtonsByRoles(@Param("roles") List<Role> roles);
+       List<Permission> selectView();
 }

@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: bhome
+    include: mcx
 
 ##logging     开发
 logging:

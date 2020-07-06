@@ -1,5 +1,6 @@
 package org.springboot.controller;
 
+import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -24,10 +25,7 @@ import org.springboot.dao.UserDao;
 import org.springboot.entity.User;
 import org.springboot.service.impl.AuthService;
 import org.springboot.service.impl.UserService;
-import org.springboot.utils.HttpContext;
-import org.springboot.utils.MD5Util;
-import org.springboot.utils.RedisUtils;
-import org.springboot.utils.UUIDUtils;
+import org.springboot.utils.*;
 import org.springboot.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsMessagingTemplate;
@@ -37,6 +35,10 @@ import javax.annotation.Resource;
 import javax.jms.Destination;
 import javax.jms.Queue;
 import javax.jms.Topic;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -220,11 +222,14 @@ public class TestController extends BaseController {
   @RequestMapping("send")
   public void send(String message) {
     //方法一：添加消息到消息队列
-    jmsMessagingTemplate.convertAndSend(queue, message);
+//    jmsMessagingTemplate.convertAndSend(queue, message);
     //方法二：这种方式不需要手动创建queue，系统会自行创建名为test的队列
     //jmsMessagingTemplate.convertAndSend("test", name);
     //订阅发布模式
-//    jmsMessagingTemplate.convertAndSend(topic, message);
+    List<String> stringList = new ArrayList<>();
+    stringList.add("a");
+    stringList.add("b");
+    jmsMessagingTemplate.convertAndSend(topic, stringList);
   }
   //测试openid
   @ApiOperation(value = "测试openid",notes = "测试openid")
@@ -285,7 +290,7 @@ public class TestController extends BaseController {
   public String redisKey(String key) {
     boolean hasKey = redisUtils.exists(key);
     DecimalFormat df = new DecimalFormat("00000");          //设置格式
-    AtomicInteger z = new AtomicInteger(); //number线程安全方式增加或减少的对象
+    AtomicInteger z = new AtomicInteger(); //number线程安全方式增加或减少的对象  AtomicInteger 原子变量，多线程不影响脏读
     String str = "";
     if(hasKey){
       Object o  = redisUtils.get(key);
@@ -298,5 +303,23 @@ public class TestController extends BaseController {
       redisUtils.set(key,str,1L, TimeUnit.DAYS);
     }
     return str;
+  }
+  //查询视图
+  @ApiOperation(value = "查询视图",notes = "查询视图")
+  @ApiImplicitParams({
+
+  })
+  @RequestMapping("selectView")
+  public RestResponseData selectView() {
+    return new RestResponseData(userService.selectView());
+  }
+
+  @RequestMapping("fileRead")
+  public RestResponseData fileRead() throws FileNotFoundException {
+    File file=new File("F:\\学生表.xlsx");
+    InputStream fileStream = new FileInputStream(file);
+    Sheet sheet = new Sheet(1, 1);
+    List<Object> objects = ExcelUtil.readMoreThan1000RowBySheet(file.getPath(),sheet);
+    return new RestResponseData(objects);
   }
 }

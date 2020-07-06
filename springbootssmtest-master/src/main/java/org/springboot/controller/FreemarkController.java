@@ -38,7 +38,6 @@ public class FreemarkController {
         model.addAttribute("null", "2");
         model.addAttribute("dateObj", new Date());
         model.addAttribute("bol", true);
-
         return "index";
     }
 }

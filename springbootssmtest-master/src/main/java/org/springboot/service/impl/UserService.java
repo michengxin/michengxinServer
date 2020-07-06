@@ -34,7 +34,10 @@ public class UserService {
     QueryWrapper wq = new QueryWrapper();
     return userDao.selectList(wq);
   }
+  public List<Permission> selectView() {
+    return userDao.selectView();
 
+  }
   public int insertUser(User user){
     return userDao.insert(user);
   }
@@ -64,13 +67,27 @@ public class UserService {
     //角色list
     List<Role> roles = userDao.selectRolesByUserId(userId);
     userDto.setRoles(roles);
-    //权限list(menu)
+    //权限list(menu和button)
     List<Permission> permissionMenus = userDao.selectPermissionMenusByRoles(roles);
-
+    //将所有父菜单的子级放在对应的sonPermissions集合中
+    for(int i =0;i<permissionMenus.size();i++){
+      for (int j =0;j<permissionMenus.size();j++
+      ) {
+         if(permissionMenus.get(i).getId().equals(permissionMenus.get(j).getParentId())){
+           permissionMenus.get(i).getSonPermissions().add(permissionMenus.get(j));
+         }
+      }
+    }
+    for(int i =0;i<permissionMenus.size();i++){
+      if(!permissionMenus.get(i).getName().equals("网页端")){
+        permissionMenus.remove(i);
+        i--;
+      }
+    }
     userDto.setPermissionMenus(permissionMenus);
-    //权限list(button)
-    List<Permission> permissionsButtons = userDao.selectPermissionButtonsByRoles(roles);
-    userDto.setPermissionButtons(permissionsButtons);
     return userDto;
   }
+
+
+
 }

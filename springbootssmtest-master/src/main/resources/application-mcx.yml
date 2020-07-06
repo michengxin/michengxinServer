@@ -1,4 +1,4 @@
-bhome:
+mcx:
   excludedUrl:
     - /api/test/login
     - /api/test/register
@@ -7,4 +7,6 @@ bhome:
     - /api/test/sysnredis
     - /api/test/removeKey
     - /api/test/redisKey
+    - /api/test/selectView
+    - /api/test/fileRead
   urlPatterns: /api/*

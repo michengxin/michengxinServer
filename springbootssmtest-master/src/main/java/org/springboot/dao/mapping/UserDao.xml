@@ -49,17 +49,12 @@
         <foreach collection="roles" separator="," open="(" close=")" item="item" >
             #{item.code}
         </foreach>
-        AND tsp.type = 'menu'
+
     </select>
 
-    <select id="selectPermissionButtonsByRoles" resultType="org.springboot.entity.Permission">
-        SELECT tsp.* FROM t_sys_role tsr
-        INNER JOIN t_sys_role_permission tsrp ON tsr.id = tsrp.sys_role_id
-        INNER JOIN t_sys_permission tsp ON tsp.id = tsrp.sys_permission_id
-        WHERE tsr.code IN
-        <foreach collection="roles" separator="," open="(" close=")" item="item" >
-            #{item.code}
-        </foreach>
-        AND tsp.type = 'button'
+    <select id="selectView" resultType="org.springboot.entity.Permission">
+        SELECT * from v_
     </select>
+
+
 </mapper>

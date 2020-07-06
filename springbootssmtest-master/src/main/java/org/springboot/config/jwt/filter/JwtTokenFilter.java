@@ -7,21 +7,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springboot.config.Auth.interfac.VerificationAuth;
 import org.springboot.config.ResponseData.clas.BaseRestResponse;
+import org.springboot.config.ResponseData.clas.RestResponseData;
 import org.springboot.config.ResponseData.clas.ServiceException;
 import org.springboot.config.ResponseData.constants.CoreExceptionEnum;
 import org.springboot.config.jwt.properties.JwtProperties;
 import org.springboot.config.jwt.util.JwtTokenUtil;
 import org.springboot.config.properties.BhomeProperties;
 import org.springboot.config.wrapper.ModifyHttpServletRequestWrapper;
+import org.springboot.utils.DistributedLockHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
+import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @ClassName JwtTokenFilter
@@ -44,6 +49,7 @@ public class JwtTokenFilter  extends OncePerRequestFilter {
     )
     VerificationAuth verificationAuth;
 
+
     public JwtTokenFilter() {
     }
 
@@ -56,6 +62,7 @@ public class JwtTokenFilter  extends OncePerRequestFilter {
         String authHeader = request.getHeader(this.jwtProperties.getHeader());
         boolean flagExpired;
         String userId;
+        BaseRestResponse baseRestResponse = null;
         if (this.bhomeProperties.getExcludedPattern() != null && this.bhomeProperties.getExcludedPattern().matcher(requestURI).matches()) {
             ModifyHttpServletRequestWrapper requestWrapper = new ModifyHttpServletRequestWrapper(request);
 
@@ -64,7 +71,7 @@ public class JwtTokenFilter  extends OncePerRequestFilter {
                     String authToken = authHeader.substring("Bearer ".length());
                     this.jwtTokenUtil.parseToken(authToken);
                     flagExpired = this.jwtTokenUtil.isTokenExpired(authToken);
-                    if (!flagExpired) {
+                    if (!flagExpired) {//到期了(设置USER-ID)
                         userId = this.jwtTokenUtil.getUserIdFromToken(authToken);
                         requestWrapper.putHeader("USER-ID", userId);
                     }
@@ -72,26 +79,48 @@ public class JwtTokenFilter  extends OncePerRequestFilter {
             } catch (JwtException var13) {
                 log.info("未限制登录 JWT token 解析失败", var13);
             }
+            System.out.println("第一次拦截通过");
+            String message = request.getParameter("message");
+            //第二次拦截
+            if(null != message && !"".equals(message)) {
+                if (message.equals("cnm")) {
+                    baseRestResponse = new BaseRestResponse(CoreExceptionEnum.MANERGER_USERCODE);
+                    if (baseRestResponse != null) {
+                        httpServletResponse.setCharacterEncoding("UTF-8");
+                        httpServletResponse.setContentType("application/json; charset=utf-8");
+                        httpServletResponse.setStatus(200);
+                        httpServletResponse.getWriter().write(JSONObject.toJSONString(baseRestResponse));
+                    }
+                } else {
+                    System.out.println("第二次拦截通过");
+//                String message = request.getParameter("message");
+//                baseRestResponse = new BaseRestResponse(CoreExceptionEnum.MANERGER_USERCODE);
+                    filterChain.doFilter(requestWrapper, httpServletResponse);
+                }
+            }else{
+                filterChain.doFilter(requestWrapper, httpServletResponse);
+            }
 
-            filterChain.doFilter(requestWrapper, httpServletResponse);
         } else {
             String authToken = null;
-            BaseRestResponse baseRestResponse = null;
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 authToken = authHeader.substring("Bearer ".length());
-
                 try {
                     this.jwtTokenUtil.parseToken(authToken);
                     flagExpired = this.jwtTokenUtil.isTokenExpired(authToken);
-                    if (flagExpired) {
+                    if (flagExpired) {//失效,刷新token
                         baseRestResponse = new BaseRestResponse(CoreExceptionEnum.TOKEN_ERROR);
+                        //刷新token
+//                        String userId1 = jwtTokenUtil.getUserIdFromToken(authToken);
+//                        this.refreshToken(null,userId1);
+//                        ModifyHttpServletRequestWrapper requestWrapper = new ModifyHttpServletRequestWrapper(request);
+//                        filterChain.doFilter(requestWrapper, httpServletResponse);
                     } else {
                         userId = this.jwtTokenUtil.getUserIdFromToken(authToken);
                         if (this.verificationAuth != null) {
                             this.verificationAuth.tokenVerificationExtend(authToken);
                             this.verificationAuth.isAuth(requestURI, userId);
                         }
-
                         ModifyHttpServletRequestWrapper requestWrapper = new ModifyHttpServletRequestWrapper(request);
                         requestWrapper.putHeader("USER-ID", userId);
                         filterChain.doFilter(requestWrapper, httpServletResponse);
@@ -104,7 +133,6 @@ public class JwtTokenFilter  extends OncePerRequestFilter {
             } else {
                 baseRestResponse = new BaseRestResponse(CoreExceptionEnum.NO_CURRENT_USER);
             }
-
             if (baseRestResponse != null) {
                 httpServletResponse.setCharacterEncoding("UTF-8");
                 httpServletResponse.setContentType("application/json; charset=utf-8");
@@ -114,4 +142,21 @@ public class JwtTokenFilter  extends OncePerRequestFilter {
         }
 
     }
+
+    /**
+     * 刷新token
+     * @param respResult
+     * @param userId
+     */
+    private  void refreshToken(RestResponseData respResult, String userId) {
+        boolean isLock =  DistributedLockHandler.tryLock2(userId);
+        if(isLock){
+            respResult = new RestResponseData(CoreExceptionEnum.TOKEN_REFRESH);
+            String token = jwtTokenUtil.generateToken(userId);
+            Map resultMap = new HashMap(16);
+            resultMap.put("token", token);
+            respResult.setData(resultMap);
+        }
+    }
+
 }

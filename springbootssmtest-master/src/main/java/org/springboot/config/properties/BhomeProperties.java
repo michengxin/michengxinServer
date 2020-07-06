@@ -1,8 +1,10 @@
 package org.springboot.config.properties;
 
 import cn.hutool.core.util.ArrayUtil;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
 
 import java.util.regex.Pattern;
 
@@ -15,8 +17,9 @@ import java.util.regex.Pattern;
  */
 @Configuration
 @ConfigurationProperties(
-        prefix = "mcx"
+    prefix = "mcx"
 )
+
 public class BhomeProperties {
 
     private String[] excludedUrl;

@@ -2,10 +2,7 @@ package org.springboot.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-import org.springboot.entity.Department;
-import org.springboot.entity.Enterprise;
-import org.springboot.entity.Permission;
-import org.springboot.entity.Role;
+import org.springboot.entity.*;
 
 import java.util.Date;
 import java.util.List;
@@ -51,8 +48,7 @@ public class UserDto {
     List<Role> roles;//角色list
     @TableField(exist = false)
     List<Permission> permissionMenus;//权限list(menu)
-    @TableField(exist = false)
-    List<Permission> permissionButtons;//权限list(button)
+
     @TableField(exist = false)
     String oldPassword;//旧密码
     @TableField(exist = false)
