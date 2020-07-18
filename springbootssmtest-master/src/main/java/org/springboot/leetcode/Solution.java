@@ -1,6 +1,7 @@
 package org.springboot.leetcode;
 
 import cn.hutool.core.util.StrUtil;
+import org.apache.xmlbeans.impl.schema.StscChecker;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -1063,10 +1064,137 @@ class CQueue {
 //      给定一个链表: 1->2->3->4->5, 和 k = 2.
 //      返回链表 4->5.
       public static ListNode getKthFromEnd(ListNode head, int k) {
-          int i =0;
-          while(head.next !=null){
-
+          ListNode slow=head,fast=head;
+          int t = 0;
+          while(fast!=null){
+              if(t>=k) slow=slow.next;
+              fast = fast.next;
+              t++;
           }
+          return slow;
+      }
+//    给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
+//    示例:
+//    输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3 maxSlidingWindow
+//    输出: [3,3,5,5,6,7]
+//    解释:
+//
+//    滑动窗口的位置                最大值
+//---------------               -----
+//        [1  3  -1] -3  5  3  6  7      3
+//        1 [3  -1  -3] 5  3  6  7       3
+//        1  3 [-1  -3  5] 3  6  7       5
+//        1  3  -1 [-3  5  3] 6  7       5
+//        1  3  -1  -3 [5  3  6] 7       6
+//        1  3  -1  -3  5 [3  6  7]      7
+      public static int[] maxSlidingWindow(int[] nums, int k) {
+          int numLen = nums.length;
+          if (numLen == 0) return new int[0];
+          int[] ans = new int[numLen - k + 1]; // 保存结果
+          int left = -1; // 左指针
+          int right = k - 2; // 右指针
+          int max = left; // 最大值指针
+          while (right < numLen - 1) {
+              left++;
+              right++;
+              if (max < left) { // 更新最大值
+                  max = left;
+                  for (int i = left; i <= right; i++) {
+                      max = nums[max] < nums[i] ? i : max;
+                  }
+              }
+              else
+                  max = nums[max] < nums[right] ? right : max; // 更新最大值
+              ans[left] = nums[max];
+          }
+          return ans;
+
+      }
+//    你正在使用一堆木板建造跳水板。有两种类型的木板，其中长度较短的木板长度为shorter，
+//    长度较长的木板长度为longer。你必须正好使用k块木板。编写一个方法，生成跳水板所有可能的长度。
+//    返回的长度需要从小到大排列。
+//    示例：
+//    输入：
+//    shorter = 1
+//    longer = 2
+//    k = 3
+//    输出： {3,4,5,6}
+//    提示：
+//    0 < shorter <= longer
+//    0 <= k <= 100000
+      public static int[] divingBoard(int shorter, int longer, int k) {
+        if(k == 0) return new int[]{};
+        int mid = longer - shorter;
+        int minReturn = shorter * k;
+        int maxReturn = longer * k;
+        if(mid ==0) return new int[]{minReturn};
+        int number = (maxReturn - minReturn)/mid-1;
+        int[] returnInt = new int[number+2];
+        returnInt[0] = minReturn;
+        returnInt[number+1] = maxReturn;
+        for(int i =1;i<number+1;i++){
+            returnInt[i] = minReturn +mid*i;
+        }
+        return returnInt;
+      }
+//    给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+//    如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。
+//    注意：你不能在买入股票前卖出股票。
+//    示例 1:
+//    输入: [7,1,5,3,6,4]
+//    输出: 5
+//    解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+//    注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。
+//    示例 2:
+//    输入: [7,6,4,3,1]
+//    输出: 0
+//    解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+      public static int maxProfit(int[] prices) {
+          int maxprofit = 0;
+          for (int i = 0; i < prices.length - 1; i++) {
+              for (int j = i + 1; j < prices.length; j++) {
+                  int profit = prices[j] - prices[i];
+                  if (profit > maxprofit)
+                      maxprofit = profit;
+              }
+          }
+          return maxprofit;
+
+      }
+
+//    输入整数数组 arr ，找出其中最小的 k 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
+//    示例 1：
+//    输入：arr = [3,2,1], k = 2
+//    输出：[1,2] 或者 [2,1]
+//    示例 2：
+//    输入：arr = [0,1,2,1], k = 1
+//    输出：[0]
+      public static int[] getLeastNumbers(int[] arr, int k) {
+          if (arr.length < k) return null;
+          int[] returnInt = new int[k];
+          for (int i = 0; i < arr.length - 1; i++) {
+              for (int j = 0; j < arr.length - i - 1; j++) {
+                  if (arr[j] > arr[j + 1]) {
+                      int temp = arr[j];
+                      arr[j] = arr[j + 1];
+                      arr[j + 1] = temp;
+                  }
+              }
+          }
+          for (int i = 0;i<k;i++){
+              returnInt[i] = arr[i];
+          }
+          return returnInt;
+      }
+
+    /**
+     * 直接插入排序
+     * @param arr
+     * @return
+     */
+      public static int[] straightInsertionSort(int[] arr){
+
+             return null;
       }
 
       public static void main(String[] args) throws InterruptedException {
@@ -1192,17 +1320,39 @@ class CQueue {
 //          System.out.println(firstUniqChar(s));
 //        int[] a ={1,2,3,4,5};
 //        int[] b =exchange(a);
-          ListNode l1 = new ListNode(1);
-          ListNode l2 = new ListNode(2);
-          l1.next =l2;
-          ListNode l3 = new ListNode(3);
-          l2.next =l3;
-          ListNode l4 = new ListNode(4);
-          l3.next =l4;
-          ListNode l5 = new ListNode(5);
-          l4.next =l5;
-          getKthFromEnd(l1,2);
-
-
+//          ListNode l1 = new ListNode(1);
+//          ListNode l2 = new ListNode(2);
+//          l1.next =l2;
+//          ListNode l3 = new ListNode(3);
+//          l2.next =l3;
+//          ListNode l4 = new ListNode(4);
+//          l3.next =l4;
+//          ListNode l5 = new ListNode(5);
+//          l4.next =l5;
+//          ListNode a = getKthFromEnd(l1,2);
+//          while(a.next !=null){
+//              System.out.println(a.val);
+//              a = a.next;
+//          }
+//          System.out.println(a.val);
+//          int[] nums = {1,3,-1,-3,5,3,6,7};
+//          int k = 3;
+//          int[] a = maxSlidingWindow(nums,k);
+//          for(int i =0;i<a.length;i++){
+//              System.out.println(a[i]);
+//          }
+//          int shorter = 1,longer =2,k =3;
+//          int[] a = divingBoard(shorter,longer,k);
+//          for(int i =0;i<a.length;i++){
+//              System.out.println(a[i]);
+//          }
+//          int[] a ={2,4,1};
+//          System.out.println(maxProfit(a));
+          int[] returnInt = {3,2,1,5,4};
+          int a = 2;
+          int[] returnInt1 = getLeastNumbers(returnInt,a);
+          for(int i =0;i<returnInt1.length;i++){
+              System.out.println(returnInt1[i]);
+          }
     }
 }
