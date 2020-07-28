@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springboot.annotation.CherryAnnotation;
 import org.springboot.config.BaseController.abstrac.BaseController;
 import org.springboot.config.ResponseData.clas.RestResponseData;
 import org.springboot.config.ResponseData.clas.ServiceException;
@@ -310,7 +311,8 @@ public class TestController extends BaseController {
 
   })
   @RequestMapping("selectView")
-  public RestResponseData selectView() {
+  @CherryAnnotation(name="a")
+  public RestResponseData selectView(String key) {
     return new RestResponseData(userService.selectView());
   }
 

@@ -9,4 +9,5 @@ mcx:
     - /api/test/redisKey
     - /api/test/selectView
     - /api/test/fileRead
+
   urlPatterns: /api/*

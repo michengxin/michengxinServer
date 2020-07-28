@@ -78,43 +78,7 @@ public class Solution {
         return returnList;
     }
 
-    //    输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
-//
-//             
-//
-//    示例 1：
-//
-//    输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
-//    输出：[1,2,3,6,9,8,7,4,5]
-    public int[] spiralOrder(int[][] matrix) {
-        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return new int[0];
-        int rows = matrix.length;
-        int columns = matrix[0].length;
-        int[] returnInt = new int[rows * columns];
-        int index = 0;
-        int left = 0, right = columns - 1, top = 0, bottom = rows - 1;
-        while (left <= right && top <= bottom) {
-            for (int i = left; i <= right; i++) {
-                returnInt[index++] = matrix[top][i];
-            }
-            for (int i = top + 1; i <= bottom; i++) {
-                returnInt[index++] = matrix[i][right];
-            }
-            if (left < right && top < bottom) {
-                for (int column = right - 1; column > left; column--) {
-                    returnInt[index++] = matrix[bottom][column];
-                }
-                for (int row = bottom; row > top; row--) {
-                    returnInt[index++] = matrix[row][left];
-                }
-            }
-            left++;
-            right--;
-            top++;
-            bottom--;
-        }
-        return returnInt;
-    }
+
 
     /**
      * 求 1+2+...+n ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
@@ -1187,15 +1151,57 @@ class CQueue {
           return returnInt;
       }
 
+//    给定字符串 s 和 t ，判断 s 是否为 t 的子序列。
+//    你可以认为 s 和 t 中仅包含英文小写字母。字符串 t 可能会很长（长度 ~= 500,000），而 s 是个短字符串（长度 <=100）。
+//    字符串的一个子序列是原始字符串删除一些（也可以不删除）字符而不改变剩余字符相对位置形成的新字符串。（例如，"ace"是"abcde"的一个子序列，而"aec"不是）。
+//    示例 1:
+//    s = "abc", t = "ahbgdc"
+//    返回 true.
+//    示例 2:
+//    s = "axc", t = "ahbgdc"
+//    返回 false.
+//    后续挑战 :
+//    如果有大量输入的 S，称作S1, S2, ... , Sk 其中 k >= 10亿，你需要依次检查它们是否为 T 的子序列。在这种情况下，你会怎样改变代码？
+      public static boolean[] isSubsequence(String[] s, String t) {
+          boolean[] returnBoolean = new boolean[s.length];
+          for (int k = 0;k<returnBoolean.length;k++){
+              int i = 0, j = 0;//i控制s的下标,j控制t的下标
+              while (i < s[k].length() && j < t.length()) {
+                  if (s[k].charAt(i) == t.charAt(j)) i++;
+                  j++;
+              }
+              returnBoolean[k] =  i == s[k].length();
+          }
+          return returnBoolean;
+      }
+//    输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+//    示例 1：
+//    输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+//    输出：[1,2,3,6,9,8,7,4,5]
+//    示例 2：
+//    输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+//    输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+      public static int[] spiralOrder(int[][] matrix) {
+
+         return null;
+      }
     /**
+     * 1.将第一个数和第二个数排序，然后构成一个有序序列
+     * 2.将第三个数插入进去，构成一个新的有序序列。
+     * 3.对第四个数、第五个数……直到最后一个数，重复第二步。
+     * 如何写写成代码：
+     * 1.首先设定插入次数，即循环次数，for(int i=1;i<length;i++)，1个数的那次不用插入。< span="">
+     * 2.设定插入数和得到已经排好序列的最后一个数的位数。insertNum和j=i-1。
+     * 3.从最后一个数开始向前循环，如果插入数小于当前数，就将当前数向后移动一位。
+     * 4.将当前数放置到空着的位置，即j+1。
      * 直接插入排序
      * @param arr
      * @return
      */
-      public static int[] straightInsertionSort(int[] arr){
-
-             return null;
-      }
+//      public static int[] straightInsertionSort(int[] arr){
+//            for(int i=1;) Arrays.sort();
+//            return null;
+//      }
 
       public static void main(String[] args) throws InterruptedException {
 //        Solution s = new Solution();
@@ -1348,11 +1354,25 @@ class CQueue {
 //          }
 //          int[] a ={2,4,1};
 //          System.out.println(maxProfit(a));
-          int[] returnInt = {3,2,1,5,4};
-          int a = 2;
-          int[] returnInt1 = getLeastNumbers(returnInt,a);
-          for(int i =0;i<returnInt1.length;i++){
-              System.out.println(returnInt1[i]);
-          }
+//          int[] returnInt = {3,2,1,5,4};
+//          int a = 2;
+//          int[] returnInt1 = getLeastNumbers(returnInt,a);
+//          for(int i =0;i<returnInt1.length;i++){
+//              System.out.println(returnInt1[i]);
+//          }
+//           String[] s = {"abc","axc","aaaaa"};
+//           String t = "ahbgdc";
+//
+//          for(int i=0;i<isSubsequence(s,t).length;i++){
+//              System.out.println(isSubsequence(s,t)[i]);//false
+//          }
+//    s = "abc", t = "ahbgdc"
+//    返回 true.
+//    示例 2:
+//    s = "axc", t = "ahbgdc"
+//    返回 false.
+
+
+
     }
 }

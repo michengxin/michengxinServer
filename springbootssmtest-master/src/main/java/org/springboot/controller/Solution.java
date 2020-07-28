@@ -25,19 +25,15 @@ public class Solution {
                 ) {
                     if(list.get(j).equals(a.charAt(i))){
                         list.remove(list.get(j));
-                        System.out.println(list);
                     }
                     if(j == list.size()-1 && !list.get(j).equals(a.charAt(i))){
                         list.add(a.charAt(i));
-                        System.out.println(list);
                     }
                 }
             }else{
                 list.add(a.charAt(i));
-                System.out.println(list);
             }
         }
-
     }
     public static void main(String[] args) {
         Solution a = new Solution();
