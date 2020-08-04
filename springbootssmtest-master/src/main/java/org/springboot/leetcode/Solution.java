@@ -1,8 +1,6 @@
 package org.springboot.leetcode;
 
-import cn.hutool.core.util.StrUtil;
-import org.apache.xmlbeans.impl.schema.StscChecker;
-import org.springframework.util.StringUtils;
+
 
 import java.util.*;
 import java.util.concurrent.Semaphore;
@@ -24,6 +22,12 @@ import static java.util.stream.Collectors.toList;
  * [-1, -1, 2]
  * ]
  */
+ class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
+}
 public class Solution {
     public List<List<Integer>> threeSum(int[] nums) {
         Arrays.sort(nums);
@@ -1182,8 +1186,219 @@ class CQueue {
 //    输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
 //    输出：[1,2,3,4,8,12,11,10,9,5,6,7]
       public static int[] spiralOrder(int[][] matrix) {
+          if (matrix == null || matrix.length == 0 || matrix[0].length == 0) { //判空
+              return new int[0];
+          }
+          int rows = matrix.length, columns = matrix[0].length;
+          int[] order = new int[rows * columns];
+          int index = 0;
+          int left = 0, right = columns - 1, top = 0, bottom = rows - 1;
+          while (left <= right && top <= bottom) {
+              for (int column = left; column <= right; column++) {
+                  order[index++] = matrix[top][column];
+              }
+              for (int row = top + 1; row <= bottom; row++) {
+                  order[index++] = matrix[row][right];
+              }
+              if (left < right && top < bottom) {
+                  for (int column = right - 1; column > left; column--) {
+                      order[index++] = matrix[bottom][column];
+                  }
+                  for (int row = bottom; row > top; row--) {
+                      order[index++] = matrix[row][left];
+                  }
+              }
+              left++;
+              right--;
+              top++;
+              bottom--;
+          }
+          return order;
 
-         return null;
+      }
+
+//    给定一个二叉树，找出其最大深度。
+//    二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+//    说明: 叶子节点是指没有子节点的节点。
+//    示例：
+//    给定二叉树 [3,9,20,null,null,15,7]，
+//             3
+//            / \
+//           9  20
+//             /  \
+//            15   7
+//    返回它的最大深度 3 。
+    public static int maxDepth(TreeNode root) {
+        if (root == null) { //return：从被调用函数返回到主调函数中继续执行，并非一遇到return整个递归结束
+            return 0;
+        } else {
+            int leftHeight = maxDepth(root.left);
+            int rightHeight = maxDepth(root.right);
+            return Math.max(leftHeight, rightHeight) + 1;
+        }
+    }
+//    在MATLAB中，有一个非常有用的函数 reshape，它可以将一个矩阵重塑为另一个大小不同的新矩阵，
+//    但保留其原始数据。
+//    给出一个由二维数组表示的矩阵，以及两个正整数r和c，分别表示想要的重构的矩阵的行数和列数。
+//    重构后的矩阵需要将原始矩阵的所有元素以相同的行遍历顺序填充。
+//    如果具有给定参数的reshape操作是可行且合理的，则输出新的重塑矩阵；否则，输出原始矩阵。
+//    示例 1:
+//    输入:
+//    nums =
+//            [[1,2],
+//            [3,4]]
+//    r = 1, c = 4
+//    输出:
+//            [[1,2,3,4]]
+//    解释:
+//    行遍历nums的结果是 [1,2,3,4]。新的矩阵是 1 * 4 矩阵, 用之前的元素值一行一行填充新矩阵。
+//    示例 2:
+//    输入:
+//    nums =
+//            [[1,2],
+//            [3,4]]
+//    r = 2, c = 4
+//    输出:
+//            [[1,2],
+//            [3,4]]
+//    解释:
+//    没有办法将 2 * 2 矩阵转化为 2 * 4 矩阵。 所以输出原矩阵。
+      public int[][] matrixReshape(int[][] nums, int r, int c) {
+          return null;
+      }
+//    给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+//    你可以假设数组中无重复元素。
+//    示例 1:
+//    输入: [1,3,5,6], 5
+//    输出: 2
+//    示例 2:
+//    输入: [1,3,5,6], 2
+//    输出: 1
+//    示例 3:
+//    输入: [1,3,5,6], 7
+//    输出: 4
+//    示例 4:
+//    输入: [1,3,5,6], 0
+//    输出: 0
+    public static int searchInsert(int[] nums, int target) {
+        int j =0;
+        if(nums.length == 1){
+            if(nums[0]<target) return 1;
+        }else {
+            for (int i = 0; i < nums.length - 1; i++) {
+                if (nums[i] == target) {
+                    j = i;
+                }
+                if (nums[i] < target && target <= nums[i + 1]) {
+                    j = i + 1;
+                }
+                if (target > nums[i + 1]) {
+                    j = i + 2;
+                }
+            }
+        }
+       return j;
+    }
+//    给你一个数组 nums 。数组「动态和」的计算公式为：runningSum[i] = sum(nums[0]…nums[i]) 。
+//    请返回 nums 的动态和。
+//    示例 1：
+//    输入：nums = [1,2,3,4]
+//    输出：[1,3,6,10]
+//    解释：动态和计算过程为 [1, 1+2, 1+2+3, 1+2+3+4] 。
+//    示例 2：
+//    输入：nums = [1,1,1,1,1]
+//    输出：[1,2,3,4,5]
+//    解释：动态和计算过程为 [1, 1+1, 1+1+1, 1+1+1+1, 1+1+1+1+1] 。
+//    示例 3：
+//    输入：nums = [3,1,2,10,1]
+//    输出：[3,4,6,16,17]
+      public static int[] runningSum(int[] nums) {
+          int[] returnInt = new int[nums.length];
+          for(int i=0;i<nums.length;i++){
+              int j = i;
+              while(j>=0){
+                  returnInt[i] +=nums[j];
+                  j--;
+              }
+          }
+          return returnInt;
+      }
+//    魔术索引。 在数组A[0...n-1]中，有所谓的魔术索引，满足条件A[i] = i。给定一个有序整数数组，
+//    编写一种方法找出魔术索引，若有的话，在数组A中找出一个魔术索引，
+//    如果没有，则返回-1。若有多个魔术索引，返回索引值最小的一个。
+//
+//    示例1:
+//    输入：nums = [0, 2, 3, 4, 5]
+//    输出：0
+//    说明: 0下标的元素为0
+//    示例2:
+//    输入：nums = [1, 1, 1]
+//    输出：1
+//    说明:
+//
+//    nums长度在[1, 1000000]之间
+//    此题为原书中的 Follow-up，即数组中可能包含重复元素的版本
+      public static int findMagicIndex(int[] nums) {
+         int i = -1;
+         for(int j=0;j<nums.length;j++){
+             if(j == nums[j]){
+                 i = j;
+                 break;
+             }
+         }
+         return i;
+      }
+//    给定一组非负整数，重新排列它们的顺序使之组成一个最大的整数。
+//    示例 1:
+//    输入: [10,2]
+//    输出: 210
+//    示例 2:
+//    输入: [3,30,34,5,9]
+//    输出: 9534330
+//    说明: 输出结果可能非常大，所以你需要返回一个字符串而不是整数。
+static class LargerNumberComparator implements Comparator<String> {
+    @Override
+    public int compare(String a, String b) {
+        String order1 = a + b;
+        String order2 = b + a;
+        return order2.compareTo(order1);
+    }
+}
+
+      public static  String largestNumber(int[] nums) {
+          StringBuffer sb = new StringBuffer();
+          String[] numStr = new String[nums.length];
+          for(int i=0;i<nums.length;i++){//将所有数字转成string
+              numStr[i] = String.valueOf(nums[i]);
+          }
+          Arrays.sort(numStr,new LargerNumberComparator());
+          for(int i=0;i<numStr.length;i++){
+              sb.append(numStr[i]);
+          }
+          return sb.toString();
+      }
+//    给定两个字符串形式的非负整数 num1 和num2 ，计算它们的和。
+//    注意：
+//    num1 和num2 的长度都小于 5100.
+//    num1 和num2 都只包含数字 0-9.
+//    num1 和num2 都不包含任何前导零。
+//    你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式。
+      public static String addStrings(String num1, String num2) {
+          int i = num1.length() - 1, j = num2.length() - 1, add = 0;
+          StringBuffer ans = new StringBuffer();
+          while (i >= 0 || j >= 0 || add != 0) {
+              int x = i >= 0 ? num1.charAt(i) - '0' : 0;
+              int y = j >= 0 ? num2.charAt(j) - '0' : 0;
+              int result = x + y + add;
+              ans.append(result % 10);
+              add = result / 10;
+              i--;
+              j--;
+          }
+          // 计算完以后的答案需要翻转过来
+          ans.reverse();
+          return ans.toString();
+
       }
     /**
      * 1.将第一个数和第二个数排序，然后构成一个有序序列
@@ -1195,14 +1410,45 @@ class CQueue {
      * 3.从最后一个数开始向前循环，如果插入数小于当前数，就将当前数向后移动一位。
      * 4.将当前数放置到空着的位置，即j+1。
      * 直接插入排序
-     * @param arr
+     * @param
      * @return
      */
-//      public static int[] straightInsertionSort(int[] arr){
-//            for(int i=1;) Arrays.sort();
-//            return null;
-//      }
+      public static int[] straightInsertionSort(int[] arr){
+            int length = arr.length;
+            int insertNumber;//要插入的数
+            for(int i=1;i<length;i++){
+                insertNumber = arr[i];
+                int j = i-1;//已经排序好的长度s
+                while(j>=0&&arr[j]>insertNumber){//序列从后到前循环，将大于insertNum的数向后移动一格
+                    arr[j+1]=arr[j];//元素移动一格
+                    j--;
+                }
+                arr[j+1]=insertNumber;//将需要插入的数放在要插入的位置。
 
+            }
+            return arr;
+      }
+
+    /**
+     * 2.希尔排序
+
+     * 对于直接插入排序问题，数据量巨大时。
+     * 1.将数的个数设为n，取奇数k=n/2，将下标差值为k的书分为一组，构成有序序列。
+     * 2.再取k=k/2 ，将下标差值为k的书分为一组，构成有序序列。
+     * 3.重复第二步，直到k=1执行简单插入排序。
+     * 如何写成代码：
+     * 1.首先确定分的组数。
+     * 2.然后对组中元素进行插入排序。
+     * 3.然后将length/2，重复1,2步，直到length=0为止。
+     * @param a
+     * @throws InterruptedException
+     */
+    public  void sheelSort(int[] a){
+        int d  = a.length;
+        while (d!=0) {
+
+        }
+    }
       public static void main(String[] args) throws InterruptedException {
 //        Solution s = new Solution();
 //        int[] nums = {-1, 0, 1, 2, -1, -4};
@@ -1371,8 +1617,44 @@ class CQueue {
 //    示例 2:
 //    s = "axc", t = "ahbgdc"
 //    返回 false.
+//             3
+//            / \
+//           9  20
+//             /  \
+//            15   7
+//    返回它的最大深度 3 。
+//[3,9,20,null,null,15,7] 3 TreeNode root maxDepth
+//          TreeNode root = new TreeNode(3);
+//          TreeNode root1 = new TreeNode(9);
+//          root.left = root1;
+//          TreeNode root2 = new TreeNode(20);
+//          root.right = root2;
+//          TreeNode root3 = new TreeNode(15);
+//          root2.left = root3;
+//          TreeNode root4 = new TreeNode(7);
+//          root2.right = root4;
+//          System.out.println(maxDepth(root));
+//          int[][]matrix ={{1,2,3},{4,5,6},{7,8,9}};
+//          int[] a = spiralOrder(matrix);
+//          for(int i = 0;i<a.length;i++){
+//              System.out.println(a[i]);
+//          }
 
-
+//          int[] nums ={1,3};
+//          int target = 3;
+//          System.out.println(searchInsert(nums,target));
+//            int[] nums ={3,1,2,10,1};
+//          int[] return1 = runningSum(nums);
+//          for(int i =0;i<return1.length;i++){
+//            System.out.println(return1[i]);
+//          }
+//          int[] nums = {0, 2, 3, 4, 5};
+//          System.out.println(findMagicIndex(nums));//0
+//            int[] nums ={3,30,34,5,9};
+////            System.out.println(largestNumber(nums));//9534330
+          String a = "86043";
+          String b = "5582";
+          System.out.println(addStrings(a,b));
 
     }
 }

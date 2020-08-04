@@ -1,10 +1,13 @@
 package org.springboot.Aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.beans.binding.ObjectExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.SourceLocation;
 import org.springboot.annotation.CherryAnnotation;
 import org.springboot.config.ResponseData.clas.RestResponseData;
 import org.springframework.stereotype.Component;
@@ -44,9 +47,10 @@ public class CherryAspect {
             proceed = pjp.proceed(args);
             ObjectMapper objectMapper = new ObjectMapper();
             restResponseData = objectMapper.convertValue(proceed, RestResponseData.class);
-            System.out.println(restResponseData); //返回值
-
+            restResponseData.setCode(99999);
+            restResponseData.setData(cherryAnnotation.name());
         } catch (Throwable throwable) {
+            System.out.println("aaaaaa");
             throwable.printStackTrace();
         }finally {
             return restResponseData;
@@ -54,8 +58,13 @@ public class CherryAspect {
     }
     @AfterReturning(value = "execution(* org.springboot.controller.*.*(..)) && @annotation(org.springboot.annotation.CherryAnnotation)", returning = "value")
     public void AfterReturning(JoinPoint joinPoint, Object value) {
-        System.out.println(joinPoint);
-        System.out.println(value);
+
+        String a = joinPoint.getKind();
+        Object[] b = joinPoint.getArgs();
+        Signature v = joinPoint.getSignature();
+        SourceLocation c= joinPoint.getSourceLocation();
+        JoinPoint.StaticPart d =joinPoint.getStaticPart();
+        Object e =joinPoint.getTarget();
     }
     //标识一个前置增强方法，相当于BeforeAdvice的功能
 //    @Before(value = "execution(* org.springboot.controller.*.*(..)) && @annotation(org.springboot.annotation.CherryAnnotation)",  returning = "value")
@@ -64,15 +73,21 @@ public class CherryAspect {
 //    }
     //final增强，不管是抛出异常或者正常退出都会执行。
     @After(value = "execution(* org.springboot.controller.*.*(..)) && @annotation(org.springboot.annotation.CherryAnnotation)")
-    public void After(JoinPoint joinPoint) {
+    public RestResponseData After(JoinPoint joinPoint) {
+        RestResponseData restResponseData = new RestResponseData();
+        restResponseData.setData("After");
         System.out.println("After");
         System.out.println(joinPoint);
+        return restResponseData;
     }
     //异常抛出增强，相当于ThrowsAdvice
     @AfterThrowing(value = "execution(* org.springboot.controller.*.*(..)) && @annotation(org.springboot.annotation.CherryAnnotation)")
-    public void AfterThrowing(JoinPoint joinPoint) {
+    public RestResponseData AfterThrowing(JoinPoint joinPoint) {
         System.out.println("AfterThrowing");
         System.out.println(joinPoint);
+        RestResponseData restResponseData = new RestResponseData();
+        restResponseData.setData("AfterThrowing");
+        return restResponseData;
     }
     // 环绕增强，相当于MethodInterceptor
 //    @Around(value = "execution(* org.springboot.controller.*.*(..)) && @annotation(org.springboot.annotation.CherryAnnotation)")

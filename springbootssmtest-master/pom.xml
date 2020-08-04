@@ -15,8 +15,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
+    <!--默认关掉单元测试 -->
+    <skipTests>true</skipTests>
+    <fastjson.version>1.2.31</fastjson.version>
+    <netty.version>4.1.6.Final</netty.version>
+
   </properties>
 
   <dependencyManagement>
@@ -155,7 +161,12 @@
           <artifactId>aspectjweaver</artifactId>
           <version>1.8.13</version>
       </dependency>
-
+    <!-- netty -->
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>${netty.version}</version>
+    </dependency>
 
   </dependencies>
 

@@ -3,6 +3,7 @@ package org.springboot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springboot.dto.UserDto;
 import org.springboot.entity.*;
 import org.springboot.dao.UserDao;
@@ -35,7 +36,7 @@ public class UserService {
     return userDao.selectList(wq);
   }
   public List<Permission> selectView() {
-    return userDao.selectView();
+    throw new RuntimeException("111");
 
   }
   public int insertUser(User user){
